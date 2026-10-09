@@ -1,23 +1,23 @@
-# Catálogo
+# Catalogue
 
-Microsserviço de catálogo da plataforma Corpoário, estruturado com Java 25 e
-Quarkus.
+The Catalogue microservice for the Corpoário digital atelier platform, built
+with Java 25 and Quarkus.
 
-## Requisitos
+## Requirements
 
 - JDK 25
-- Maven 3.9 ou superior
-- PostgreSQL disponível em `localhost:5432`, com banco `catalogo`
+- Maven 3.9 or later
+- PostgreSQL available at `localhost:5432`, with a database named `catalogue`
 
-## Executar em desenvolvimento
+## Run in development mode
 
-Configure `DB_URL`, `DB_USERNAME` e `QUARKUS_DATASOURCE_PASSWORD` para o seu
-PostgreSQL e execute:
+Set `DB_URL`, `DB_USERNAME`, and `QUARKUS_DATASOURCE_PASSWORD` for your
+PostgreSQL instance, then run:
 
 ```bash
 mvn quarkus:dev
 ```
 
-O modo de desenvolvimento disponibiliza a interface Swagger UI em
-`http://localhost:8080/q/swagger-ui`. Os endpoints de health check e métricas
-Prometheus ficam em `/q/health` e `/q/metrics`.
+In development mode, Swagger UI is available at
+`http://localhost:8080/q/swagger-ui`. Health checks and Prometheus metrics are
+available at `/q/health` and `/q/metrics`.
