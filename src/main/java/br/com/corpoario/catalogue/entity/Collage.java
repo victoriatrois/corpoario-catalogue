@@ -19,7 +19,8 @@ public class Collage extends Artwork {
     public Collage() {}
 
     public Collage(String title, BigDecimal price, String imageUrl) {
-        // Direct field access, bypass the missing setters
+        setTitle(title);
+        setPrice(price);
         this.imageUrl = imageUrl;
     }
 
