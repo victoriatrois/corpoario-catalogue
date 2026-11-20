@@ -18,6 +18,7 @@ import io.restassured.config.JsonConfig;
 import io.restassured.path.json.config.JsonPathConfig.NumberReturnType;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
 
@@ -27,7 +28,14 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.matchesRegex;
 
-
+// format of a collage
+// {
+//     "id": "28ba356c-5745-4a88-b70d-f4148a6f8f83",
+//     "title": "Modern Art",
+//     "price": 100.00, // * Default RestAssured JsonPath parses decimals as Float/Double
+//     "createdAt": "2026-11-19T21:10:35.080614",
+//     "updatedAt": "2026-11-19T21:10:35.080632"
+// }
 
 @QuarkusTest
 public class CollageResourceTest {
@@ -36,7 +44,7 @@ public class CollageResourceTest {
 
     @BeforeAll
     static void configureJsonNumberParsing() {
-        // Default RestAssured JsonPath parses decimals as Float/Double;
+        // *
         // BigDecimal is needed to match price precisely against BigDecimal assertions.
         RestAssured.config = RestAssured.config()
             .jsonConfig(JsonConfig.jsonConfig().numberReturnType(NumberReturnType.BIG_DECIMAL));
@@ -90,14 +98,6 @@ public class CollageResourceTest {
     void shouldReturnCompleteCollageDetails() {
         Collage collage = new Collage("Modern Art", new BigDecimal("100.00"), "https://imageurl.com/art.png");
 
-        // {
-        //     "id": "28ba356c-5745-4a88-b70d-f4148a6f8f83",
-        //     "title": "Modern Art",
-        //     "price": 100.00,
-        //     "createdAt": "2026-11-19T21:10:35.080614",
-        //     "updatedAt": "2026-11-19T21:10:35.080632"
-        // }
-
         QuarkusTransaction.requiringNew().run(() -> repository.persist(collage));
 
         given()
@@ -109,5 +109,61 @@ public class CollageResourceTest {
             .body("[0].title", equalTo("Modern Art"))
             .body("[0].price", comparesEqualTo(new BigDecimal("100.00")))
             .body("[0].imageUrl", equalTo("https://imageurl.com/art.png"));
+    }
+
+    @Test
+    void shouldReturnTheCollageForTheGivenId() {
+        Collage requestedCollage = new Collage("Modern Art", new BigDecimal("100.00"), "https://imageurl.com/art.png");
+        Collage anotherCollage = new Collage("Other Art", new BigDecimal("50.00"), "https://imageurl.com/other.png");
+
+        QuarkusTransaction.requiringNew().run(() -> repository.persist(requestedCollage, anotherCollage));
+
+        given()
+        .when().get("/collages/{id}", requestedCollage.getId())
+        .then()
+        .statusCode(200)
+        .body("id", equalTo(requestedCollage.getId().toString()))
+        .body("title", equalTo("Modern Art"))
+        .body("size()", equalTo(6));
+    }
+
+    @Test
+    void shouldReturnAllTheCollagesDetails() {
+        Collage collage = new Collage(
+            "Modern Art",
+            new BigDecimal("100.00"),
+            "https://imageurl.com/art.png");
+
+        QuarkusTransaction.requiringNew().run(() -> repository.persist(collage));
+
+        given()
+        .when().get("/collages/{id}", collage.getId())
+        .then()
+        .statusCode(200)
+        .body("price", comparesEqualTo(new BigDecimal("100.00")))
+        .body("imageUrl", equalTo("https://imageurl.com/art.png"))
+        .body("createdAt", notNullValue())
+        .body("updatedAt", notNullValue())
+        .body("keySet()", containsInAnyOrder(
+            "id",
+            "title",
+            "price",
+            "createdAt",
+            "updatedAt",
+            "imageUrl"));
+    }
+
+    @Test
+    void shouldReturnNotFoundWhenCollageDoesNotExist() {
+        Collage collage = new Collage("Modern Art", new BigDecimal("100.00"), "https://imageurl.com/art.png");
+
+        QuarkusTransaction.requiringNew().run(() -> repository.persist(collage));
+
+        UUID nonExistentId = new UUID(collage.getId().getMostSignificantBits() ^ 1L, collage.getId().getLeastSignificantBits());
+
+        given()
+        .when().get("/collages/{id}", nonExistentId)
+        .then()
+        .statusCode(404);
     }
 }
