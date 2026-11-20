@@ -1,0 +1,7 @@
+$kind: http-request
+id: 15548fd9-f3a4-4adf-978e-c011d904e758
+url: "{{baseUrl}}/collages"
+method: GET
+headers:
+  Accept: application/json
+order: 1000

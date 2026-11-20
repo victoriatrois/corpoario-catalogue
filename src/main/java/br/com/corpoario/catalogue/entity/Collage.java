@@ -1,7 +1,6 @@
 package br.com.corpoario.catalogue.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +12,7 @@ import jakarta.validation.constraints.NotBlank;
 public class Collage extends Artwork {
 
     @NotBlank(message = "Image URL cannot be blank")
-    @Column(nullable = false, updatable = true)
+    @Column(name = "image_url", nullable = false, updatable = true)
     private String imageUrl;
 
     public Collage() {}
@@ -24,6 +23,10 @@ public class Collage extends Artwork {
         this.imageUrl = imageUrl;
     }
 
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
     // Defining methods' contracts,
     // however implementation will be dealt with later
     @Override
@@ -32,4 +35,5 @@ public class Collage extends Artwork {
     public void update() {}
 
     public void delete() {}
+
 }
