@@ -11,23 +11,26 @@ with Java 25 and Quarkus.
 
 ## Run in development mode
 
-Set a local PostgreSQL password and start the database from the project root:
+Create a `.env` file in the project root with a local PostgreSQL password:
 
-```bash
-export POSTGRES_PASSWORD=local-password
-docker compose up -d
+```dotenv
+DB_PASSWORD=local-password
 ```
 
-Use the same password to start the application:
+Load the variables into your shell, then start the database and application:
 
 ```bash
-export QUARKUS_DATASOURCE_PASSWORD="$POSTGRES_PASSWORD"
+set -a
+. ./.env
+set +a
+
+docker compose up -d
 mvn quarkus:dev
 ```
 
 To stop the database without deleting its data, run `docker compose down`. See
-[the Docker documentation](src/main/documentation/docker.md) for details and
-configuration options.
+[the Docker documentation](documentation/docker.md) and
+[database documentation](documentation/database.md) for details.
 
 In development mode, Swagger UI is available at
 `http://localhost:8080/q/swagger-ui`. Health checks and Prometheus metrics are

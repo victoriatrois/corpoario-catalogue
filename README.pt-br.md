@@ -11,23 +11,26 @@ Quarkus.
 
 ## Executar em desenvolvimento
 
-Configure a senha local do PostgreSQL e inicie o banco na raiz do projeto:
+Crie um arquivo `.env` na raiz do projeto com uma senha local do PostgreSQL:
 
-```bash
-export POSTGRES_PASSWORD=uma-senha-local
-docker compose up -d
+```dotenv
+DB_PASSWORD=uma-senha-local
 ```
 
-Use a mesma senha para iniciar a aplicação:
+Carregue as variáveis no terminal e inicie o banco e a aplicação:
 
 ```bash
-export QUARKUS_DATASOURCE_PASSWORD="$POSTGRES_PASSWORD"
+set -a
+. ./.env
+set +a
+
+docker compose up -d
 mvn quarkus:dev
 ```
 
 Para parar o banco sem apagar os dados, execute `docker compose down`. Consulte
-[a documentação do Docker](src/main/documentation/docker.pt-br.md) para detalhes e
-opções de configuração.
+[a documentação do Docker](documentation/docker.pt-br.md) e
+[a documentação do banco de dados](documentation/database.pt-br.md) para mais detalhes.
 
 O modo de desenvolvimento disponibiliza a interface Swagger UI em
 `http://localhost:8080/q/swagger-ui`. Os endpoints de health check e métricas
