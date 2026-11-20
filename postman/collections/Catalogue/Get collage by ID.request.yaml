@@ -1,0 +1,15 @@
+$kind: http-request
+id: 6069f3f2-ab4c-4220-9892-1a276f577d2d
+url: "{{baseUrl}}/collages/:id"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  id: 00000000-0000-0000-0000-000000000000
+description: |-
+  Retrieves one collage by its UUID. Replace the example path variable `id`
+  with an ID from Get collages. An existing collage returns 200 with a JSON
+  object containing id, title, price, imageUrl, createdAt, and updatedAt. A
+  valid UUID that does not match a collage returns 404. The response for a
+  malformed UUID has not been specified.
+order: 2000

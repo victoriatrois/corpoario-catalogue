@@ -31,6 +31,25 @@ collages exist; otherwise, inspect the returned fields and values. The
 collection is intended for manual checks and does not create test data or
 replace the automated JUnit tests.
 
+### Find a collage by ID (`GET /collages/{id}`)
+
+The `id` path parameter is a UUID. When a matching collage exists, the endpoint
+returns status `200` and a JSON object with `id`, `title`, `price`, `imageUrl`,
+`createdAt`, and `updatedAt`. A valid UUID with no matching collage returns
+`404 Not Found`. The response for a malformed UUID has not been specified.
+
+The equivalent lookup uses the supplied UUID as a parameter:
+
+```sql
+SELECT id, title, price, image_url, created_at, updated_at
+FROM collage
+WHERE id = $1;
+```
+
+In Postman, open **Catalogue → Get collage by ID** and replace the example
+`id` path variable with a UUID returned by **Catalogue → Get collages**.
+Send the request to inspect the response.
+
 ### Count collages
 
 Useful for checking the number of records before or after a cleanup:

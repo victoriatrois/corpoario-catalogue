@@ -1,6 +1,7 @@
 package br.com.corpoario.catalogue.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import br.com.corpoario.catalogue.entity.Collage;
 import br.com.corpoario.catalogue.repository.CollageRepository;
@@ -17,5 +18,10 @@ public class CollageService {
     @Transactional
     public List<Collage> findAll() {
         return repository.findAll().list();
+    }
+
+    @Transactional
+    public Collage findById(UUID id) {
+        return repository.findById(id);
     }
 }

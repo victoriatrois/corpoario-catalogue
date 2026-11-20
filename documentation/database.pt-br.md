@@ -31,6 +31,26 @@ vazia se não houver colagens; caso contrário, confira os campos e valores
 retornados. A collection serve para verificações manuais: ela não cria dados
 de teste nem substitui os testes automatizados com JUnit.
 
+### Buscar uma colagem por ID (`GET /collages/{id}`)
+
+O parâmetro `id` no caminho é um UUID. Quando a colagem existe, o endpoint
+retorna status `200` e um objeto JSON com `id`, `title`, `price`, `imageUrl`,
+`createdAt` e `updatedAt`. Um UUID válido sem uma colagem correspondente
+retorna `404 Not Found`. A resposta para um UUID malformado ainda não foi
+especificada.
+
+A consulta equivalente usa o UUID informado como parâmetro:
+
+```sql
+SELECT id, title, price, image_url, created_at, updated_at
+FROM collage
+WHERE id = $1;
+```
+
+No Postman, abra **Catalogue → Get collage by ID** e substitua o exemplo da
+variável de caminho `id` por um UUID retornado por **Catalogue → Get collages**.
+Envie a requisição para conferir a resposta.
+
 ### Contar colagens
 
 Útil para conferir a quantidade de registros antes ou depois de uma limpeza:
