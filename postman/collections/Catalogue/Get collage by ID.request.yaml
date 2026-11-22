@@ -9,7 +9,21 @@ pathVariables:
 description: |-
   Retrieves one collage by its UUID. Replace the example path variable `id`
   with an ID from Get collages. An existing collage returns 200 with a JSON
-  object containing id, title, price, imageUrl, createdAt, and updatedAt. A
-  valid UUID that does not match a collage returns 404. The response for a
-  malformed UUID has not been specified.
+  object containing id, title, price, imageUrl, createdAt, and updatedAt.
+  An ID that is not a UUID in canonical 8-4-4-4-12 hexadecimal format
+  (uppercase or lowercase) returns 400 with this JSON response:
+
+  {
+    "status": 400,
+    "error": "Invalid collage id",
+    "message": "The collage id value must be a valid UUID"
+  }
+
+  A valid UUID that does not match a collage returns 404. For example:
+
+  {
+    "status": 404,
+    "error": "Collage not found",
+    "message": "No collage was found with the id 28ba356c-5745-4a88-b70d-f4148a6f8f83"
+  }
 order: 2000

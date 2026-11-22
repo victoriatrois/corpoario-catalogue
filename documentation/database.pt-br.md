@@ -35,9 +35,30 @@ de teste nem substitui os testes automatizados com JUnit.
 
 O parâmetro `id` no caminho é um UUID. Quando a colagem existe, o endpoint
 retorna status `200` e um objeto JSON com `id`, `title`, `price`, `imageUrl`,
-`createdAt` e `updatedAt`. Um UUID válido sem uma colagem correspondente
-retorna `404 Not Found`. A resposta para um UUID malformado ainda não foi
-especificada.
+`createdAt` e `updatedAt`. Um ID que não seja um UUID no formato canônico
+hexadecimal `8-4-4-4-12` (maiúsculas ou minúsculas) retorna `400 Bad Request`.
+Um UUID válido sem uma colagem correspondente retorna `404 Not Found`.
+
+As duas respostas de erro usam `application/json` e contêm os campos `status`,
+`error` e `message`. Por exemplo, para um ID inválido:
+
+```json
+{
+  "status": 400,
+  "error": "Invalid collage id",
+  "message": "The collage id value must be a valid UUID"
+}
+```
+
+Para um ID válido sem uma colagem correspondente:
+
+```json
+{
+  "status": 404,
+  "error": "Collage not found",
+  "message": "No collage was found with the id 28ba356c-5745-4a88-b70d-f4148a6f8f83"
+}
+```
 
 A consulta equivalente usa o UUID informado como parâmetro:
 
