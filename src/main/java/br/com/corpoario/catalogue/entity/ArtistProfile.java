@@ -51,6 +51,18 @@ public class ArtistProfile {
             this.email = email;
     }
 
+    public String getBio() {
+        return bio;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

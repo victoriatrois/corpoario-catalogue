@@ -1,5 +1,17 @@
 # Database tables and useful queries
 
+## `artist_profile`
+
+### Retrieve the published profile (`GET /artist-profile`)
+
+When a profile exists, the endpoint returns `200` and a JSON object with `bio`,
+`photoUrl`, and `email`. If no profile exists, it returns `404` with a JSON
+response containing `status`, `error`, and `message`.
+
+The system expects at most one current profile. Until the database enforces
+this rule, multiple records are treated as an internal error (`500`) rather
+than choosing a profile arbitrarily.
+
 ## `collage`
 
 The `collage` table is created by
