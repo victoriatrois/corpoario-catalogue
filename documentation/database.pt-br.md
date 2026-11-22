@@ -1,5 +1,17 @@
 # Tabelas do banco e consultas úteis
 
+## `artist_profile`
+
+### Consultar o perfil publicado (`GET /artist-profile`)
+
+Quando existe um perfil, a rota retorna `200` e um objeto JSON com `bio`,
+`photoUrl` e `email`. Se não houver perfil, retorna `404` com uma resposta JSON
+contendo `status`, `error` e `message`.
+
+O sistema espera no máximo um perfil atual. Enquanto essa regra não é
+garantida pelo banco, a existência de mais de um registro é tratada como erro
+interno (`500`), sem escolher um perfil arbitrariamente.
+
 ## `collage`
 
 A tabela `collage` é criada pela migration

@@ -1,0 +1,20 @@
+$kind: http-request
+id: 2aa603d6-4f35-4ab6-b865-6cd7457c9803
+url: "{{baseUrl}}/artist-profile"
+method: GET
+headers:
+  Accept: application/json
+description: |-
+  Retrieves the published artist profile. A profile returns 200 with a JSON
+  object containing bio, photoUrl, and email. If no profile exists, the
+  response is 404:
+
+  {
+    "status": 404,
+    "error": "Artist profile not found",
+    "message": "No artist profile was found"
+  }
+
+  If multiple current profiles exist, the endpoint returns 500 instead of
+  choosing one arbitrarily.
+order: 3000
