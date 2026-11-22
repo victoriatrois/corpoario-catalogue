@@ -35,8 +35,30 @@ replace the automated JUnit tests.
 
 The `id` path parameter is a UUID. When a matching collage exists, the endpoint
 returns status `200` and a JSON object with `id`, `title`, `price`, `imageUrl`,
-`createdAt`, and `updatedAt`. A valid UUID with no matching collage returns
-`404 Not Found`. The response for a malformed UUID has not been specified.
+`createdAt`, and `updatedAt`. An ID that is not a UUID in the canonical
+`8-4-4-4-12` hexadecimal format (uppercase or lowercase) returns
+`400 Bad Request`. A valid UUID with no matching collage returns `404 Not Found`.
+
+Both error responses use `application/json` and contain `status`, `error`, and
+`message` fields. For example, an invalid ID returns:
+
+```json
+{
+  "status": 400,
+  "error": "Invalid collage id",
+  "message": "The collage id value must be a valid UUID"
+}
+```
+
+For a valid ID with no matching collage:
+
+```json
+{
+  "status": 404,
+  "error": "Collage not found",
+  "message": "No collage was found with the id 28ba356c-5745-4a88-b70d-f4148a6f8f83"
+}
+```
 
 The equivalent lookup uses the supplied UUID as a parameter:
 

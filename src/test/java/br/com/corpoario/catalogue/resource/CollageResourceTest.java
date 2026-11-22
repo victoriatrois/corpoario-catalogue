@@ -164,6 +164,48 @@ public class CollageResourceTest {
         given()
         .when().get("/collages/{id}", nonExistentId)
         .then()
-        .statusCode(404);
+        .statusCode(404)
+        .contentType("application/json")
+        .body("status", equalTo(404))
+        .body("error", equalTo("Collage not found"))
+        .body("message", equalTo("No collage was found with the id " + nonExistentId));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCollageIdIsNotAUuid() {
+        String invalidId = "I'm not a UUID";
+        given()
+        .when().get("/collages/{id}", invalidId)
+        .then()
+        .statusCode(400)
+        .contentType("application/json")
+        .body("status", equalTo(400))
+        .body("error", equalTo("Invalid collage id"))
+        .body("message", equalTo("The collage id value must be a valid UUID"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCollageIdIsNotInCanonicalUuidFormat() {
+        given()
+        .when().get("/collages/{id}", "1-1-1-1-1")
+        .then()
+        .statusCode(400)
+        .contentType("application/json")
+        .body("status", equalTo(400))
+        .body("error", equalTo("Invalid collage id"))
+        .body("message", equalTo("The collage id value must be a valid UUID"));
+    }
+
+    @Test
+    void shouldAcceptUppercaseUuidWhenLookingUpCollage() {
+        Collage collage = new Collage("Modern Art", new BigDecimal("100.00"), "https://imageurl.com/art.png");
+
+        QuarkusTransaction.requiringNew().run(() -> repository.persist(collage));
+
+        given()
+        .when().get("/collages/{id}", collage.getId().toString().toUpperCase())
+        .then()
+        .statusCode(200)
+        .body("id", equalTo(collage.getId().toString()));
     }
 }
