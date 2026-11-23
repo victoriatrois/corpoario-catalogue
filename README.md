@@ -35,3 +35,15 @@ To stop the database without deleting its data, run `docker compose down`. See
 In development mode, Swagger UI is available at
 `http://localhost:8080/q/swagger-ui`. Health checks and Prometheus metrics are
 available at `/q/health` and `/q/metrics`.
+
+## Run the tests
+
+```bash
+mvn test
+```
+
+Tests run against a disposable PostgreSQL container started automatically by
+Quarkus Dev Services, so Docker must be running. They never use the development
+database or `DB_URL`. If the Docker socket is not at the default location (for
+example, with Colima), set `DOCKER_HOST` and
+`TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock` first.
