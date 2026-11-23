@@ -51,6 +51,10 @@ public class ArtistProfile {
             this.email = email;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     public String getBio() {
         return bio;
     }
@@ -61,6 +65,14 @@ public class ArtistProfile {
 
     public String getEmail() {
         return email;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     @PrePersist

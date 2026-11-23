@@ -8,9 +8,62 @@ When a profile exists, the endpoint returns `200` and a JSON object with `bio`,
 `photoUrl`, and `email`. If no profile exists, it returns `404` with a JSON
 response containing `status`, `error`, and `message`.
 
-The system expects at most one current profile. Until the database enforces
-this rule, multiple records are treated as an internal error (`500`) rather
-than choosing a profile arbitrarily.
+Migration [`V3`](../src/main/resources/database/migration/V3__Create_artist_profile_history.sql)
+enforces at most one current profile with a unique index, including concurrent
+inserts. If the table already contains multiple rows, the migration
+fails without deleting or choosing a profile; resolve the duplicates before
+restarting the migration.
+
+The `artist_profile_history` table stores snapshots of previously published
+profiles. Each snapshot has its own UUID, the original profile UUID, biography,
+photo URL, email, original creation/update timestamps, and an archive timestamp.
+It has no foreign key to `artist_profile`, so snapshots survive replacement of
+the current row and multiple versions can refer to the same profile. Persist a
+snapshot and the corresponding profile change in the same transaction. No
+history endpoint or draft storage is provided.
+
+### Inspect the current profile
+
+```sql
+SELECT id, bio, photo_url, email, created_at, updated_at
+FROM artist_profile;
+```
+
+To check how many current records exist, including before applying `V3`:
+
+```sql
+SELECT COUNT(*) FROM artist_profile;
+```
+
+## `artist_profile_history`
+
+### List archived versions
+
+```sql
+SELECT id, artist_profile_id, bio, photo_url, email, created_at, updated_at, archived_at
+FROM artist_profile_history
+ORDER BY archived_at DESC, id;
+```
+
+### Find versions of a profile
+
+Supply the original profile UUID as the `$1` parameter. This can find versions
+even after the current profile has been replaced.
+
+```sql
+SELECT id, artist_profile_id, bio, photo_url, email, created_at, updated_at, archived_at
+FROM artist_profile_history
+WHERE artist_profile_id = $1
+ORDER BY archived_at DESC, id;
+```
+
+To retrieve one archived version, supply its snapshot UUID as `$1`:
+
+```sql
+SELECT id, artist_profile_id, bio, photo_url, email, created_at, updated_at, archived_at
+FROM artist_profile_history
+WHERE id = $1;
+```
 
 ## `collage`
 
