@@ -31,13 +31,15 @@ public class CollageResource {
     CollageService service;
 
     @GET
-    public List<Collage> getAll() {
-        return service.findAll();
+    public List<CollageResponse> getAll() {
+        return service.findAll().stream()
+            .map(this::toResponse)
+            .toList();
     }
 
     @Path("/{id}")
     @GET
-    public Collage findById(@PathParam("id") String id) {
+    public CollageResponse findById(@PathParam("id") String id) {
         UUID collageId = parseCollageId(id);
 
         Collage collage = service.findById(collageId);
@@ -46,7 +48,7 @@ public class CollageResource {
             throw new CollageNotFoundException(collageId);
         }
 
-        return collage;
+        return toResponse(collage);
     }
 
     @POST
