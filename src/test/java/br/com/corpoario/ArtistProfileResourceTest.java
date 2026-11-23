@@ -60,5 +60,4 @@ public class ArtistProfileResourceTest {
             .body("photoUrl", equalTo("https://example.com/artist.jpg"))
             .body("email", equalTo("artist@example.com"));
     }
-
 }

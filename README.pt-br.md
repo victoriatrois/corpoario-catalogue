@@ -42,4 +42,8 @@ Prometheus ficam em `/q/health` e `/q/metrics`.
 mvn test
 ```
 
-Os testes usam um container PostgreSQL descartável, iniciado automaticamente pelo Quarkus Dev Services; por isso, o Docker precisa estar em execução. Eles nunca usam o banco de desenvolvimento nem `DB_URL`. Se o socket do Docker não estiver no local padrão (por exemplo, no Colima), defina antes `DOCKER_HOST` e `TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock`.
+Os testes usam um container PostgreSQL descartável, iniciado automaticamente
+pelo Quarkus Dev Services; por isso, o Docker precisa estar em execução. Eles
+nunca usam o banco de desenvolvimento nem `DB_URL`. Se o socket do Docker não
+estiver no local padrão (por exemplo, no Colima), defina antes `DOCKER_HOST` e
+`TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock`.

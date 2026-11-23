@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.sql.DataSource;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,20 +39,11 @@ class ArtistProfilePersistenceTest {
     @Inject
     DataSource dataSource;
 
-    private UUID[] historyIds = new UUID[0];
-
     @BeforeEach
     @Transactional
     void cleanDatabase() {
+        history.deleteAll();
         profiles.deleteAll();
-    }
-
-    @AfterEach
-    @Transactional
-    void cleanHistory() {
-        for (UUID id : historyIds) {
-            history.deleteById(id);
-        }
     }
 
     @Test
@@ -62,7 +52,7 @@ class ArtistProfilePersistenceTest {
         QuarkusTransaction.requiringNew().run(() -> profiles.persist(original));
         ArtistProfile persisted = QuarkusTransaction.requiringNew().call(() -> profiles.findById(original.getId()));
 
-        historyIds = QuarkusTransaction.requiringNew().call(() -> {
+        UUID[] historyIds = QuarkusTransaction.requiringNew().call(() -> {
             ArtistProfile current = profiles.findById(original.getId());
             ArtistProfileHistory first = new ArtistProfileHistory(current);
             ArtistProfileHistory second = new ArtistProfileHistory(current);
