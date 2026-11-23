@@ -43,6 +43,33 @@ collages exist; otherwise, inspect the returned fields and values. The
 collection is intended for manual checks and does not create test data or
 replace the automated JUnit tests.
 
+### Create a collage (`POST /collages`)
+
+Send a JSON object with `title`, `price`, and `imageUrl`. `title` and
+`imageUrl` must not be blank, and `price` cannot be negative. A successful
+request returns `201 Created`, the created collage in the response body, and a
+`Location` header pointing to the new resource.
+
+```json
+{
+  "title": "Modern Art",
+  "price": 100.00,
+  "imageUrl": "https://imageurl.com/art.png"
+}
+```
+
+Invalid input returns `400 Bad Request` with `status`, `error`, and `message`.
+If more than one field is invalid, their messages are sorted and separated by
+`; `. For example:
+
+```json
+{
+  "status": 400,
+  "error": "Validation error",
+  "message": "Price cannot be negative"
+}
+```
+
 ### Find a collage by ID (`GET /collages/{id}`)
 
 The `id` path parameter is a UUID. When a matching collage exists, the endpoint

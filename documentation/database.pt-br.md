@@ -43,6 +43,33 @@ vazia se não houver colagens; caso contrário, confira os campos e valores
 retornados. A collection serve para verificações manuais: ela não cria dados
 de teste nem substitui os testes automatizados com JUnit.
 
+### Criar uma colagem (`POST /collages`)
+
+Envie um objeto JSON com `title`, `price` e `imageUrl`. `title` e `imageUrl`
+não podem estar vazios, e `price` não pode ser negativo. Uma requisição
+bem-sucedida retorna `201 Created`, a colagem criada no corpo da resposta e um
+cabeçalho `Location` apontando para o novo recurso.
+
+```json
+{
+  "title": "Modern Art",
+  "price": 100.00,
+  "imageUrl": "https://imageurl.com/art.png"
+}
+```
+
+Dados inválidos retornam `400 Bad Request` com `status`, `error` e `message`.
+Se mais de um campo for inválido, as mensagens são ordenadas e separadas por
+`; `. Por exemplo:
+
+```json
+{
+  "status": 400,
+  "error": "Validation error",
+  "message": "Price cannot be negative"
+}
+```
+
 ### Buscar uma colagem por ID (`GET /collages/{id}`)
 
 O parâmetro `id` no caminho é um UUID. Quando a colagem existe, o endpoint
