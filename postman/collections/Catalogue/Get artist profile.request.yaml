@@ -15,6 +15,7 @@ description: |-
     "message": "No artist profile was found"
   }
 
-  If multiple current profiles exist, the endpoint returns 500 instead of
-  choosing one arbitrarily.
+  The database allows at most one current profile, so the response never
+  depends on choosing between several. Previous versions are kept in
+  artist_profile_history and are not exposed by this endpoint.
 order: 3000

@@ -22,6 +22,21 @@ the current row and multiple versions can refer to the same profile. Persist a
 snapshot and the corresponding profile change in the same transaction. No
 history endpoint or draft storage is provided.
 
+#### Explore with Postman
+
+Start the database and application as described in the
+[README](../README.md#run-in-development-mode). In the Postman workspace
+connected to this repository, select **Local View** and the **Local**
+environment, then open **Catalogue → Get artist profile** and send the request.
+The environment's `baseUrl` defaults to `http://localhost:8080`; change it if
+the application uses another address.
+
+A successful response has status `200` and a JSON object with `bio`,
+`photoUrl`, and `email`; without a current profile, the response is `404`.
+Archived versions are not exposed by the API, so inspect them with the queries
+below. The collection is intended for manual checks and does not create test
+data or replace the automated JUnit tests.
+
 ### Inspect the current profile
 
 ```sql

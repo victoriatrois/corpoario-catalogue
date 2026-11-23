@@ -23,6 +23,21 @@ várias versões do mesmo perfil. Persista o snapshot e a alteração correspond
 do perfil na mesma transação. Não há rota de histórico nem armazenamento de
 rascunhos.
 
+#### Explorar com o Postman
+
+Inicie o banco e a aplicação conforme o
+[README](../README.pt-br.md#executar-em-desenvolvimento). No workspace do
+Postman conectado a este repositório, selecione **Local View** e o ambiente
+**Local**; depois, abra **Catalogue → Get artist profile** e envie a
+requisição. O `baseUrl` do ambiente usa `http://localhost:8080` por padrão;
+altere-o se a aplicação estiver em outro endereço.
+
+Uma resposta bem-sucedida tem status `200` e um objeto JSON com `bio`,
+`photoUrl` e `email`; sem perfil atual, a resposta é `404`. As versões
+arquivadas não são expostas pela API, portanto consulte-as com as consultas
+abaixo. A collection serve para verificações manuais: ela não cria dados de
+teste nem substitui os testes automatizados com JUnit.
+
 ### Consultar o perfil atual
 
 ```sql
