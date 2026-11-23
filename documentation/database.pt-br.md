@@ -8,9 +8,79 @@ Quando existe um perfil, a rota retorna `200` e um objeto JSON com `bio`,
 `photoUrl` e `email`. Se não houver perfil, retorna `404` com uma resposta JSON
 contendo `status`, `error` e `message`.
 
-O sistema espera no máximo um perfil atual. Enquanto essa regra não é
-garantida pelo banco, a existência de mais de um registro é tratada como erro
-interno (`500`), sem escolher um perfil arbitrariamente.
+A migration [`V3`](../src/main/resources/database/migration/V3__Create_artist_profile_history.sql)
+garante no máximo um perfil atual por meio de um índice único, inclusive em
+inserções concorrentes. Se a tabela já contiver várias linhas, a
+migration falha sem excluir dados nem escolher um perfil; resolva as
+duplicidades antes de executá-la novamente.
+
+A tabela `artist_profile_history` armazena snapshots de perfis publicados
+anteriormente. Cada snapshot possui UUID próprio, UUID do perfil original,
+biografia, URL da foto, email, timestamps originais de criação/atualização e
+timestamp de arquivamento. Não há chave estrangeira para `artist_profile`,
+permitindo preservar snapshots após a substituição do perfil atual e registrar
+várias versões do mesmo perfil. Persista o snapshot e a alteração correspondente
+do perfil na mesma transação. Não há rota de histórico nem armazenamento de
+rascunhos.
+
+#### Explorar com o Postman
+
+Inicie o banco e a aplicação conforme o
+[README](../README.pt-br.md#executar-em-desenvolvimento). No workspace do
+Postman conectado a este repositório, selecione **Local View** e o ambiente
+**Local**; depois, abra **Catalogue → Get artist profile** e envie a
+requisição. O `baseUrl` do ambiente usa `http://localhost:8080` por padrão;
+altere-o se a aplicação estiver em outro endereço.
+
+Uma resposta bem-sucedida tem status `200` e um objeto JSON com `bio`,
+`photoUrl` e `email`; sem perfil atual, a resposta é `404`. As versões
+arquivadas não são expostas pela API, portanto consulte-as com as consultas
+abaixo. A collection serve para verificações manuais: ela não cria dados de
+teste nem substitui os testes automatizados com JUnit.
+
+### Consultar o perfil atual
+
+```sql
+SELECT id, bio, photo_url, email, created_at, updated_at
+FROM artist_profile;
+```
+
+Para verificar a quantidade de registros atuais, inclusive antes de aplicar a
+`V3`:
+
+```sql
+SELECT COUNT(*) FROM artist_profile;
+```
+
+## `artist_profile_history`
+
+### Listar versões arquivadas
+
+```sql
+SELECT id, artist_profile_id, bio, photo_url, email, created_at, updated_at, archived_at
+FROM artist_profile_history
+ORDER BY archived_at DESC, id;
+```
+
+### Buscar versões de um perfil
+
+Informe o UUID do perfil original como parâmetro `$1`. A consulta encontra
+versões mesmo após a substituição do perfil atual.
+
+```sql
+SELECT id, artist_profile_id, bio, photo_url, email, created_at, updated_at, archived_at
+FROM artist_profile_history
+WHERE artist_profile_id = $1
+ORDER BY archived_at DESC, id;
+```
+
+Para consultar uma versão arquivada, informe o UUID do snapshot como `$1`:
+
+```sql
+SELECT id, artist_profile_id, bio, photo_url, email, created_at, updated_at, archived_at
+FROM artist_profile_history
+WHERE id = $1;
+```
 
 ## `collage`
 

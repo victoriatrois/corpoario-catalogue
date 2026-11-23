@@ -60,17 +60,4 @@ public class ArtistProfileResourceTest {
             .body("photoUrl", equalTo("https://example.com/artist.jpg"))
             .body("email", equalTo("artist@example.com"));
     }
-
-    @Test
-    void shouldReturnServerErrorWhenMultipleProfilesExist() {
-        ArtistProfile first = new ArtistProfile("First biography", "https://example.com/first.jpg", "first@example.com");
-        ArtistProfile second = new ArtistProfile("Second biography", "https://example.com/second.jpg", "second@example.com");
-
-        QuarkusTransaction.requiringNew().run(() -> repository.persist(first, second));
-
-        given()
-            .when().get("/artist-profile")
-            .then()
-            .statusCode(500);
-    }
 }

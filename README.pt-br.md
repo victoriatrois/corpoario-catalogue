@@ -35,3 +35,15 @@ Para parar o banco sem apagar os dados, execute `docker compose down`. Consulte
 O modo de desenvolvimento disponibiliza a interface Swagger UI em
 `http://localhost:8080/q/swagger-ui`. Os endpoints de health check e métricas
 Prometheus ficam em `/q/health` e `/q/metrics`.
+
+## Executar os testes
+
+```bash
+mvn test
+```
+
+Os testes usam um container PostgreSQL descartável, iniciado automaticamente
+pelo Quarkus Dev Services; por isso, o Docker precisa estar em execução. Eles
+nunca usam o banco de desenvolvimento nem `DB_URL`. Se o socket do Docker não
+estiver no local padrão (por exemplo, no Colima), defina antes `DOCKER_HOST` e
+`TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock`.
