@@ -24,4 +24,10 @@ public class CollageService {
     public Collage findById(UUID id) {
         return repository.findById(id);
     }
+
+    @Transactional
+    public Collage create(Collage collage) {
+        repository.persist(collage);
+        return collage;
+    }
 }

@@ -1,0 +1,14 @@
+$kind: http-request
+id: 7a84a6ea-3ce1-4ca1-86a1-e14819c22d33
+url: "{{baseUrl}}/collages"
+method: POST
+headers:
+  Accept: application/json
+  Content-Type: application/json
+body:
+  type: json
+  data:
+    title: Modern Art
+    price: 100.00
+    imageUrl: https://imageurl.com/art.png
+order: 1001

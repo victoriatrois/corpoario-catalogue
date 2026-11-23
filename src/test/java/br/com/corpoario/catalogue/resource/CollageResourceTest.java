@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.matchesRegex;
+import static io.restassured.http.ContentType.JSON;
 
 // format of a collage
 // {
@@ -207,5 +208,109 @@ public class CollageResourceTest {
         .then()
         .statusCode(200)
         .body("id", equalTo(collage.getId().toString()));
+    }
+
+    @Test
+    void shouldCreateCollage() {
+        given()
+            .contentType(JSON)
+            .body("""
+                {
+                    "title": "Modern Art",
+                    "price": 100.00,
+                    "imageUrl": "https://imageurl.com/art.png"
+                }
+                """)
+        .when().post("/collages")
+        .then()
+            .statusCode(201)
+            .header("Location", matchesRegex(".*/collages/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"))
+            .body("id", matchesRegex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"))
+            .body("title", equalTo("Modern Art"))
+            .body("price", comparesEqualTo(new BigDecimal("100.00")))
+            .body("imageUrl", equalTo("https://imageurl.com/art.png"))
+            .body("createdAt", notNullValue())
+            .body("updatedAt", notNullValue());
+    }
+
+    @Test
+    void shouldRejectCollageWithBlankTitle() {
+        given()
+            .contentType(JSON)
+            .body("""
+                {
+                    "title": " ",
+                    "price": 100.00,
+                    "imageUrl": "https://imageurl.com/art.png"
+                }
+                """)
+        .when().post("/collages")
+        .then()
+            .statusCode(400)
+            .contentType(JSON)
+            .body("status", equalTo(400))
+            .body("error", equalTo("Validation error"))
+            .body("message", equalTo("Title cannot be blank"))
+            .body("keySet()", containsInAnyOrder("status", "error", "message"));
+    }
+
+    @Test
+    void shouldRejectCollageWithNegativePrice() {
+        given()
+            .contentType(JSON)
+            .body("""
+                {
+                    "title": "Modern Art",
+                    "price": -1.00,
+                    "imageUrl": "https://imageurl.com/art.png"
+                }
+                """)
+        .when().post("/collages")
+        .then()
+            .statusCode(400)
+            .contentType(JSON)
+            .body("status", equalTo(400))
+            .body("error", equalTo("Validation error"))
+            .body("message", equalTo("Price cannot be negative"));
+    }
+
+    @Test
+    void shouldReportAllInvalidFieldsWithoutPersisting() {
+        given()
+            .contentType(JSON)
+            .body("""
+                {
+                    "title": " ",
+                    "price": null,
+                    "imageUrl": ""
+                }
+                """)
+        .when().post("/collages")
+        .then()
+            .statusCode(400)
+            .contentType(JSON)
+            .body("status", equalTo(400))
+            .body("error", equalTo("Validation error"))
+            .body("message", equalTo("Image URL cannot be blank; Price cannot be null; Title cannot be blank"));
+
+        given()
+        .when().get("/collages")
+        .then()
+            .statusCode(200)
+            .body("size()", equalTo(0));
+    }
+
+    @Test
+    void shouldRejectNullRequestBody() {
+        given()
+            .contentType(JSON)
+            .body("null")
+        .when().post("/collages")
+        .then()
+            .statusCode(400)
+            .contentType(JSON)
+            .body("status", equalTo(400))
+            .body("error", equalTo("Validation error"))
+            .body("message", equalTo("Request body cannot be null"));
     }
 }
